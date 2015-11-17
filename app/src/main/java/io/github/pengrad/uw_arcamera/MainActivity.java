@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements ScannerView.Scann
     private ScannerView mScanner;
     private View mButtonScan;
     private View mViewLogo;
+    private boolean isScanning = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +31,8 @@ public class MainActivity extends AppCompatActivity implements ScannerView.Scann
     @Override
     protected void onResume() {
         super.onResume();
-        mScanner.setVisibility(View.GONE);
-        mViewLogo.setVisibility(View.VISIBLE);
-        mButtonScan.setVisibility(View.VISIBLE);
+        showMainScreen();
+        isScanning = false;
     }
 
     @Override
@@ -43,10 +43,32 @@ public class MainActivity extends AppCompatActivity implements ScannerView.Scann
 
     @Override
     public void onClick(View v) {
+        hideMainScreen();
+        mScanner.startScanner();
+        isScanning = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isScanning) {
+            mScanner.stopScanner();
+            isScanning = false;
+            showMainScreen();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    void showMainScreen() {
+        mViewLogo.setVisibility(View.VISIBLE);
+        mButtonScan.setVisibility(View.VISIBLE);
+        mScanner.setVisibility(View.GONE);
+    }
+
+    void hideMainScreen() {
         mViewLogo.setVisibility(View.GONE);
         mButtonScan.setVisibility(View.GONE);
         mScanner.setVisibility(View.VISIBLE);
-        mScanner.startScanner();
     }
 
     @Override
